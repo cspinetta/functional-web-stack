@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+  <conversionRule conversionWord="K"
+                  converterClass="com.despegar.routing.logback.LogbackOptionStringContextKeyConverter" />
+
+  <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>
+        <![CDATA[%date %-4level [%thread] [%K{X-UOW}-%K{X-RequestId}-${HOSTNAME}] [%K{User-Agent}] [%K{X-Forwarded-For}] : %message%n]]>
+      </pattern>
+    </encoder>
+  </appender>
+
+  <appender name="async" class="ch.qos.logback.classic.AsyncAppender">
+    <appender-ref ref="console"/>
+  </appender>
+
+  <root level="INFO">
+    <appender-ref ref="async" />
+  </root>
+
+
+  <logger name="com.despegar" level="DEBUG" />
+</configuration>
