@@ -8,10 +8,10 @@ import fs2.interop.cats._
 class TxEmployeeStore(transactor: Transactor[Task]) {
 
   def findAllNames: List[String] =
-      sql"select name from Test.employee"
-        .query[String]          // Query0[String]
-        .list                   // ConnectionIO[List[String]]
-        .transact(transactor)   // Task[List[String]]
-        .unsafeRun()            // List[String]
+      sql"select name from Test.employee"   // Fragment
+        .query[String]                      // Query0[String]
+        .list                               // ConnectionIO[List[String]]
+        .transact(transactor)               // Task[List[String]]
+        .unsafeRun()                        // List[String]
 
 }

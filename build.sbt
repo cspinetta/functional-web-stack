@@ -49,7 +49,10 @@ libraryDependencies ++= Seq(
   "io.circe"                %%  "circe-java8"             % CirceVersion,
   "com.h2database"          %   "h2"                      % "1.4.193",
   "com.despegar.tech"       %%  "http4s-scala-routing"    % "0.1.0",
-  "joda-time"               %   "joda-time"               % "2.9.9"
+  "joda-time"               %   "joda-time"               % "2.9.9",
+  "com.h2database"          %   "h2"                      % "1.4.196"                 % "test",
+  "org.scalatest"           %   "scalatest_2.12"          % "3.0.3"                   % "test",
+  "org.mockito"             %   "mockito-core"            % "2.7.22"                  % "test"
 )
 
 mainClass := Some("com.despegar.demo.Server")

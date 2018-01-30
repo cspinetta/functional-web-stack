@@ -23,7 +23,7 @@ class CompanyService (xa: Transactor[Task]) extends LogSupport {
     def handleHire(request: Request, companyId: Long) =
       request.decodeWith(jsonOf[Employee], strict = true) { newEmployee =>
         companyProgram.hire(companyId, newEmployee).transact(xa).attempt.flatMap {
-          case Right(employeeList) => Ok()
+          case Right(employeeId) => Ok()
           case Left(cause) =>
             log.error(s"Error saving new employee for company $companyId", cause)
             InternalServerError("Error saving new employee")

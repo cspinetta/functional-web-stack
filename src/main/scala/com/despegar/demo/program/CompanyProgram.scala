@@ -6,11 +6,11 @@ import doobie.hi.ConnectionIO
 
 class CompanyProgram(companyStore: CompanyStore, employeeStore: EmployeeStore) {
 
-  def hire(companyId: Long, employee: Employee): ConnectionIO[Int] =
+  def hire(companyId: Long, employee: Employee): ConnectionIO[Long] =
     for {
-      _ <- employeeStore.save(employee, companyId)
-      totalStaff <- companyStore.incrementStaff(companyId)
-    } yield totalStaff
+      employeeId <- employeeStore.save(employee, companyId)
+      _ <- companyStore.incrementStaff(companyId)
+    } yield employeeId
 
   def findCompanyWithStaff(id: Long): ConnectionIO[Option[Company]] = companyStore.findCompanyWithStaff(id)
 
