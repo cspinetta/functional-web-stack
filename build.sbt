@@ -47,6 +47,7 @@ libraryDependencies ++= Seq(
   "com.zaxxer"              %   "HikariCP"                % "2.6.2",
   "io.circe"                %%  "circe-generic"           % CirceVersion,
   "io.circe"                %%  "circe-java8"             % CirceVersion,
+  "io.circe"                %%  "circe-generic-extras"    % CirceVersion,
   "com.h2database"          %   "h2"                      % "1.4.193",
   "com.despegar.tech"       %%  "http4s-scala-routing"    % "0.1.0",
   "joda-time"               %   "joda-time"               % "2.9.9",
@@ -66,8 +67,11 @@ buildInfoPackage := "com.despegar.demo"
 
 resolvers ++= Seq(
   "Nexus" at "http://nexus.despegar.it:8080/nexus/content/groups/public/",
-  "Nexus miami" at "http://nexus:8080/nexus/content/groups/public/"
+  "Nexus miami" at "http://nexus:8080/nexus/content/groups/public/",
+  Resolver.sonatypeRepo("releases")
 )
+
+addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 
 publishTo := {
   if(version.value.endsWith("SNAPSHOT"))
