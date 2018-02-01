@@ -9,8 +9,8 @@ case class Employee(id: Option[Long], name: String, age: Option[Int], salary: Bi
 
 object Employee {
   implicit val encoder: Encoder[Employee] = Encoder.forProduct4("id", "name", "age", "salary")(u => (u.id, u.name, u.age, u.salary))
-  implicit val decoder: Decoder[Employee] = Decoder.forProduct4[Long, String, Option[Int], BigDecimal, Employee]("id", "name", "age", "salary") {
-    case (id, name, age, salary) => Employee(Some(id), name, age, salary, LocalDate.now())
+  implicit val decoder: Decoder[Employee] = Decoder.forProduct4[Option[Long], String, Option[Int], BigDecimal, Employee]("id", "name", "age", "salary") {
+    case (id, name, age, salary) => Employee(id, name, age, salary, LocalDate.now())
   }
 }
 

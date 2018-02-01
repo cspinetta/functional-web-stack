@@ -1,13 +1,13 @@
 package com.despegar.demo.client
 
 import com.despegar.demo.model.{Company, Employee}
-import org.http4s._
+import org.http4s.Uri
+
 import org.http4s.dsl._
 import org.http4s.client._
 import org.http4s.client.blaze._
 import scala.concurrent.duration._
 import io.circe.syntax._
-
 
 object CompanyClient extends CompanyClient {
 
@@ -30,7 +30,7 @@ trait CompanyClient {
   }
 
   def hire(companyId: Long, employee: Employee): Either[Throwable, Unit] =
-    Uri.fromString(s"http://localhost:9290/demo/hire/$companyId").toOption match {
+    Uri.fromString(s"http://localhost:9290/demo/company/hire/$companyId").toOption match {
       case Some(uri) =>
         import Employee._
         httpClient.expect[Unit](POST(uri, employee.asJson)).unsafeAttemptRun()

@@ -1,7 +1,7 @@
 package com.despegar.demo.store
 
 import java.sql.{SQLIntegrityConstraintViolationException, Timestamp}
-import java.time.{LocalDate, LocalDateTime}
+import java.time.LocalDate
 
 import com.despegar.demo.model._
 import doobie.imports._
@@ -13,7 +13,7 @@ class CompanyStore() extends DemoStore {
          select c.id, c.name,
              		e.id, e.name, e.age, e.salary, e.start_date
          from Test.company c
-         inner join Test.employee e on e.company_id = c.id
+         left join Test.employee e on e.company_id = c.id
          where c.id = $companyId
       """.query[(Long, String,
                 Long, String, Option[Int], BigDecimal, LocalDate)].map {
