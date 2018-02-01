@@ -21,7 +21,7 @@ class CompanyStore() extends DemoStore {
             employeeId, employeeName, employeeAge, employeeSalary, employeeStartDate) =>
 
         val employee = Employee(Some(employeeId), employeeName, employeeAge, employeeSalary, employeeStartDate)
-        val company = Company(id = Some(companyId), name = companyName)
+        val company = Company(companyId = Some(companyId), name = companyName)
         (company, employee)
     }.list
 
