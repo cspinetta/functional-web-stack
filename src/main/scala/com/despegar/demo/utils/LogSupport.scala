@@ -10,11 +10,11 @@ trait LogSupport {
 
 trait SqlLogSupport { self: LogSupport =>
 
-  import doobie.imports
+  import doobie._
 
   private val debugEnabled = Config.datasource.debugEnabled
 
-  implicit val han: imports.LogHandler = imports.LogHandler {
+  implicit val han: LogHandler = LogHandler {
     case Success(s, a, e1, e2) =>
       if (debugEnabled)
         log.debug(s"""Successful Statement Execution:

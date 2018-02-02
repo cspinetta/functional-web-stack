@@ -1,10 +1,9 @@
 package com.despegar.demo.client
 
+import cats.effect.IO
 import com.despegar.demo.model.{Company, Employee}
 import org.http4s.Uri
-import cats.effect._
 import org.http4s.dsl.io._
-import org.http4s.implicits._
 import io.circe.syntax._
 import org.http4s.client._
 import org.http4s.client.blaze._
@@ -15,10 +14,12 @@ import scala.concurrent.duration._
 object CompanyClient extends CompanyClient {
 
   val clientConfig = BlazeClientConfig.defaultConfig.copy(
+    maxTotalConnections = 10,
     idleTimeout = 5.minutes,
     requestTimeout = 30.seconds
   )
-  override val httpClient: Client[IO] = PooledHttp1Client[IO](maxTotalConnections = 10, config = clientConfig)
+
+  override val httpClient: Client[IO] = Http1Client[IO](clientConfig).unsafeRunSync()
 
 }
 

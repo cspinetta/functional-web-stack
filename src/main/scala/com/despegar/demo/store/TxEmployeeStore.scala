@@ -1,8 +1,9 @@
 package com.despegar.demo.store
 
+import cats.effect.IO
 import doobie.util.transactor.Transactor
-import doobie.imports._
-import cats.effect._
+import doobie._
+import doobie.implicits._
 
 class TxEmployeeStore(transactor: Transactor[IO]) {
 
@@ -10,7 +11,7 @@ class TxEmployeeStore(transactor: Transactor[IO]) {
       sql"select name from Test.employee"   // Fragment
         .query[String]                      // Query0[String]
         .list                               // ConnectionIO[List[String]]
-        .transact(transactor)               // Task[List[String]]
-        .unsafeRun()                        // List[String]
+        .transact(transactor)               // IO[List[String]]
+        .unsafeRunSync()                    // List[String]
 
 }

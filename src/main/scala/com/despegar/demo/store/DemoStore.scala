@@ -4,7 +4,7 @@ import java.sql.Timestamp
 import java.time.LocalDateTime
 
 import com.despegar.demo.utils.{LogSupport, SqlLogSupport}
-import doobie.imports._
+import doobie._
 
 // TODO - Ver
 trait DemoStore extends LogSupport with SqlLogSupport {

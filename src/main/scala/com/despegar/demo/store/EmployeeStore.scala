@@ -3,7 +3,8 @@ package com.despegar.demo.store
 import cats.data.NonEmptyList
 import com.despegar.demo.api.EmployeeFilter
 import com.despegar.demo.model._
-import doobie.imports.{ConnectionIO, _}
+import doobie._
+import doobie.implicits._
 import doobie.util.fragments.whereAndOpt
 
 class EmployeeStore() {

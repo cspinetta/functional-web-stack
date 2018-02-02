@@ -33,6 +33,7 @@ scalacOptions ++= Seq(
 
 val Http4sVersion   = "0.18.0"
 val CirceVersion    = "0.8.0"
+val DoobieVersion   = "0.5.0-RC1"
 
 libraryDependencies ++= Seq(
   "com.despegar.library"    %   "logging"                 % "0.0.3",
@@ -40,7 +41,7 @@ libraryDependencies ++= Seq(
   "org.http4s"              %%  "http4s-circe"            % Http4sVersion,
   "org.http4s"              %%  "http4s-dsl"              % Http4sVersion,
   "org.http4s"              %%  "http4s-blaze-client"     % Http4sVersion,
-  "org.tpolecat"            %%  "doobie-core-cats"        % "0.4.4",
+  "org.tpolecat"            %%  "doobie-core"             % DoobieVersion,
   "ch.qos.logback"          %   "logback-classic"         % "1.2.1",
   "com.github.pureconfig"   %%  "pureconfig"              % "0.7.1",
   "org.mariadb.jdbc"        %   "mariadb-java-client"     % "1.5.9",

@@ -1,11 +1,11 @@
 package com.despegar.demo.db
 
+import cats.effect.IO
 import com.despegar.demo.conf.Config
 import com.despegar.demo.utils.ThreadUtils
 import com.zaxxer.hikari.HikariDataSource
 import doobie.util.transactor.Transactor
 import doobie.util.transactor.Transactor.Aux
-import cats.effect._
 
 object DemoDS {
   private[this] def dataSource: HikariDataSource = {

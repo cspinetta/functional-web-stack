@@ -2,13 +2,16 @@ package com.despegar.demo.api
 
 import java.time.LocalDate
 
+import cats.effect.IO
 import com.despegar.demo.program.EmployeeProgram
 import com.despegar.demo.utils.LogSupport
 import cats.effect._
 import org.http4s._
 import org.http4s.dsl.io._
-import org.http4s.implicits._
-import doobie.imports._
+import org.http4s._
+import org.http4s.dsl.io._
+import doobie._
+import doobie.implicits._
 import io.circe.syntax._
 
 import scala.util.Try

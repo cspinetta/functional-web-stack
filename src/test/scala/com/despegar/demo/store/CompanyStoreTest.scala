@@ -2,9 +2,9 @@ package com.despegar.demo.store
 
 import com.despegar.demo.db.DemoDS
 import com.despegar.demo.model.Company
-import doobie.imports._
+import doobie._
+import doobie.implicits._
 import org.scalatest.{FunSuite, Matchers}
-import fs2.interop.cats._
 
 class CompanyStoreTest extends FunSuite with Matchers {
 
@@ -13,7 +13,7 @@ class CompanyStoreTest extends FunSuite with Matchers {
 
     val instance = new CompanyStore
     val program: ConnectionIO[Option[Company]] = instance.findCompanyWithStaff(companyId)
-    val result: Option[Company] = program.transact(DemoDS.DemoTransactor).unsafeRun()
+    val result: Option[Company] = program.transact(DemoDS.DemoTransactor).unsafeRunSync()
 
     result.isDefined shouldBe true
     result.get.name shouldBe "Despegar.com"
@@ -25,13 +25,13 @@ class CompanyStoreTest extends FunSuite with Matchers {
   test("createCompanyTable") {
     val instance = new CompanyStore
     val program: ConnectionIO[Int] = instance.createCompanyTable
-    program.transact(DemoDS.DemoTransactor).unsafeRun()
+    program.transact(DemoDS.DemoTransactor).unsafeRunSync()
   }
 
   test("save") {
     val instance = new CompanyStore
     val program: ConnectionIO[Long] = instance.save("Hoteles.com")
-    val newCompanyId: Long = program.transact(DemoDS.DemoTransactor).unsafeRun()
+    val newCompanyId: Long = program.transact(DemoDS.DemoTransactor).unsafeRunSync()
     System.out.println(s"New company id: $newCompanyId")
   }
 
@@ -39,28 +39,28 @@ class CompanyStoreTest extends FunSuite with Matchers {
     val instance = new CompanyStore
     val newCompanies = List("Almundo", "Booking")
     val program: ConnectionIO[Int] = instance.saveAll(newCompanies)
-    val insertedRows: Long = program.transact(DemoDS.DemoTransactor).unsafeRun()
+    val insertedRows: Long = program.transact(DemoDS.DemoTransactor).unsafeRunSync()
     insertedRows shouldBe newCompanies.size
   }
 
   test("insert") {
     val instance = new CompanyStore
     val program: ConnectionIO[Int] = instance.insert(id = 500L, name = "Tomas")
-    val insertedRows: Long = program.transact(DemoDS.DemoTransactor).unsafeRun()
+    val insertedRows: Long = program.transact(DemoDS.DemoTransactor).unsafeRunSync()
     insertedRows shouldBe 1
   }
 
   test("updateName") {
     val instance = new CompanyStore
     val program: ConnectionIO[Int] = instance.updateName(id = 500L, name = "testCompany")
-    val insertedRows: Long = program.transact(DemoDS.DemoTransactor).unsafeRun()
+    val insertedRows: Long = program.transact(DemoDS.DemoTransactor).unsafeRunSync()
     insertedRows shouldBe 1
   }
 
   test("safeInsert") {
     val instance = new CompanyStore
     val program: ConnectionIO[Int] = instance.safeInsert(id = 500L, name = "TestCompany")
-    val insertedRows: Long = program.transact(DemoDS.DemoTransactor).unsafeRun()
+    val insertedRows: Long = program.transact(DemoDS.DemoTransactor).unsafeRunSync()
     insertedRows shouldBe 1
   }
 

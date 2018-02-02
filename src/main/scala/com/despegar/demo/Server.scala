@@ -10,10 +10,9 @@ import com.despegar.demo.api.{CompanyService, EmployeeService, HealthService}
 import fs2.{Stream, StreamApp}
 import fs2.StreamApp.ExitCode
 import cats.effect._
-import org.http4s._, org.http4s.dsl.io._, org.http4s.implicits._
+import org.http4s._
 import org.http4s.server.blaze._
 import org.http4s.server.Router
-import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.ExecutionContext
 
@@ -22,6 +21,7 @@ object Server extends StreamApp[IO] {
   import Programs._
 
   private val executor : ExecutorService  = Executors.newFixedThreadPool(30, namedThreadFactory("demo-server-pool"))
+  implicit val ec: ExecutionContext = ExecutionContext.fromExecutor(executor)
 
   override def stream(args: List[String], requestShutdown: IO[Unit]): Stream[IO, ExitCode] = {
 
@@ -34,7 +34,6 @@ object Server extends StreamApp[IO] {
     BlazeBuilder[IO]
       .bindHttp(9290, "localhost")
       .mountService(router)
-      .withExecutionContext(ExecutionContext.fromExecutor(executor))
       .serve
   }
 }

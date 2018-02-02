@@ -1,10 +1,11 @@
 package com.despegar.demo.store
 
-import java.sql.{SQLIntegrityConstraintViolationException, Timestamp}
+import java.sql.SQLIntegrityConstraintViolationException
 import java.time.LocalDate
 
 import com.despegar.demo.model._
-import doobie.imports._
+import doobie._
+import doobie.implicits._
 
 class CompanyStore() extends DemoStore {
 
@@ -66,7 +67,7 @@ class CompanyStore() extends DemoStore {
     fr"""update Test.company set name = $name where id = $id""".update.run
 
   def safeInsert(id: Long, name: String): ConnectionIO[Int] =
-    insert(id, name).exceptSome {
+    insert(id, name).exceptSql {
       case e: SQLIntegrityConstraintViolationException => updateName(id, name) // Important! Another ConnectionIO[Int]
     }
 }

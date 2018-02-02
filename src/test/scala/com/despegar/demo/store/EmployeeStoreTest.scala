@@ -5,17 +5,16 @@ import java.time.LocalDate
 import com.despegar.demo.api.EmployeeFilter
 import com.despegar.demo.db.DemoDS
 import com.despegar.demo.model.Employee
-import doobie.imports.{ConnectionIO, _}
+import doobie._
+import doobie.implicits._
 import org.scalatest.{FunSuite, Matchers}
-import fs2.Task
-import fs2.interop.cats._
 
 class EmployeeStoreTest extends FunSuite with Matchers {
 
   test("findAll ok") {
     val instance = new EmployeeStore
     val program: ConnectionIO[List[Employee]] = instance.findAll
-    val employees = program.transact(DemoDS.DemoTransactor).unsafeRun()
+    val employees = program.transact(DemoDS.DemoTransactor).unsafeRunSync()
 
     employees.size shouldBe 2
     employees.map(e => e.name).contains("Pepe") shouldBe true
@@ -34,7 +33,7 @@ class EmployeeStoreTest extends FunSuite with Matchers {
     )
     val program: ConnectionIO[List[Employee]] = instance.findByFilter(filter)
 
-    val employees = program.transact(DemoDS.DemoTransactor).unsafeRun()
+    val employees = program.transact(DemoDS.DemoTransactor).unsafeRunSync()
     employees.size shouldBe 1
     employees.head.name shouldBe "Pepe"
   }
@@ -43,7 +42,7 @@ class EmployeeStoreTest extends FunSuite with Matchers {
     val instance = new EmployeeStore
     val employeeId = 6L
     val program: ConnectionIO[Int] = instance.happyBirthday(employeeId)
-    val updatedRows = program.transact(DemoDS.DemoTransactor).unsafeRun()
+    val updatedRows = program.transact(DemoDS.DemoTransactor).unsafeRunSync()
 
     updatedRows shouldBe 1
   }

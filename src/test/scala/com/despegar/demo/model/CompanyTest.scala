@@ -2,7 +2,6 @@ package com.despegar.demo.model
 
 import java.time.LocalDate
 
-import io.circe._
 import io.circe.syntax._
 import org.scalatest.{FunSuite, Matchers}
 
