@@ -4,28 +4,29 @@ import com.despegar.demo.model.Employee
 import com.despegar.demo.program.CompanyProgram
 import com.despegar.demo.utils.LogSupport
 import doobie.imports._
-import fs2.Task
-import fs2.interop.cats._
+import cats.effect._
 import org.http4s._
-import org.http4s.dsl._
+import org.http4s.dsl.io._
+import org.http4s.implicits._
+import doobie.imports._
 import io.circe.syntax._
 
-class CompanyService (xa: Transactor[Task]) extends LogSupport {
+class CompanyService (xa: Transactor[IO]) extends LogSupport {
 
   import com.despegar.demo.utils.CirceUtils.circeCustomSyntax._
   import com.despegar.demo.model.Employee._
   import com.despegar.demo.model.Company._
 
 
-  def service(companyProgram: CompanyProgram): HttpService = {
+  def service(companyProgram: CompanyProgram): HttpService[IO] = {
 
-    def route = HttpService {
+    def route = HttpService[IO] {
       case GET -> Root / LongVar(id) => handleGetById(id)
       case req@POST -> Root / "hire" / LongVar(companyId) => handleHire(req, companyId)
     }
 
-    def handleHire(request: Request, companyId: Long) =
-      request.decodeWith(jsonOf[Employee], strict = false) { newEmployee =>
+    def handleHire(request: Request[IO], companyId: Long) =
+      request.decodeWith(jsonOf[IO, Employee], strict = false) { newEmployee =>
         companyProgram.hire(companyId, newEmployee).transact(xa).attempt.flatMap {
           case Right(employeeId) => Ok()
           case Left(cause) =>
@@ -48,6 +49,6 @@ class CompanyService (xa: Transactor[Task]) extends LogSupport {
 }
 
 object CompanyService extends LogSupport {
-  def apply(xa: Transactor[Task]): CompanyService = new CompanyService(xa)
+  def apply(xa: Transactor[IO]): CompanyService = new CompanyService(xa)
 
 }

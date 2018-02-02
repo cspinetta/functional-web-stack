@@ -7,28 +7,31 @@ import com.despegar.demo.program._
 import com.despegar.demo.store._
 import com.despegar.demo.utils.ThreadUtils._
 import com.despegar.demo.api.{CompanyService, EmployeeService, HealthService}
-import fs2.{Stream, Task}
+import fs2.{Stream, StreamApp}
+import fs2.StreamApp.ExitCode
+import cats.effect._
+import org.http4s._, org.http4s.dsl.io._, org.http4s.implicits._
+import org.http4s.server.blaze._
 import org.http4s.server.Router
-import org.http4s.server.blaze.BlazeBuilder
-import org.http4s.util.StreamApp
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.ExecutionContext
 
-object Server extends StreamApp {
+object Server extends StreamApp[IO] {
   import Stores._
   import Programs._
 
   private val executor : ExecutorService  = Executors.newFixedThreadPool(30, namedThreadFactory("demo-server-pool"))
 
-  override def stream(args: List[String]): Stream[Task, Nothing] = {
+  override def stream(args: List[String], requestShutdown: IO[Unit]): Stream[IO, ExitCode] = {
 
-    val router = Router(
+    val router: HttpService[IO] = Router[IO](
       "/demo/employee" -> EmployeeService(transactor).service(employeeProgram),
       "/demo/company" -> CompanyService(transactor).service(companyProgram),
       "/" -> HealthService().service()
     )
 
-    BlazeBuilder
+    BlazeBuilder[IO]
       .bindHttp(9290, "localhost")
       .mountService(router)
       .withExecutionContext(ExecutionContext.fromExecutor(executor))

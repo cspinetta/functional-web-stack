@@ -3,12 +3,17 @@ package com.despegar.demo.api
 import com.despegar.demo.utils.LogSupport
 import com.despegar.demo.BuildInfo
 import org.http4s.HttpService
-import org.http4s.dsl._
+import cats.effect._
+import org.http4s._
+import org.http4s.dsl.io._
+import org.http4s.implicits._
+import doobie.imports._
+import io.circe.syntax._
 
 class HealthService extends LogSupport {
 
-  def service(): HttpService = {
-    def route = HttpService {
+  def service(): HttpService[IO] = {
+    def route = HttpService[IO] {
       case GET -> Root / "health-check" => Ok(fullVersion)
     }
     route

@@ -2,10 +2,9 @@ package com.despegar.demo.store
 
 import doobie.util.transactor.Transactor
 import doobie.imports._
-import fs2.Task
-import fs2.interop.cats._
+import cats.effect._
 
-class TxEmployeeStore(transactor: Transactor[Task]) {
+class TxEmployeeStore(transactor: Transactor[IO]) {
 
   def findAllNames: List[String] =
       sql"select name from Test.employee"   // Fragment

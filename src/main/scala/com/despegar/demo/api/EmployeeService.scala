@@ -4,26 +4,26 @@ import java.time.LocalDate
 
 import com.despegar.demo.program.EmployeeProgram
 import com.despegar.demo.utils.LogSupport
-import fs2.Task
-import fs2.interop.cats._
+import cats.effect._
 import org.http4s._
-import org.http4s.dsl._
+import org.http4s.dsl.io._
+import org.http4s.implicits._
 import doobie.imports._
 import io.circe.syntax._
 
 import scala.util.Try
 
 
-class EmployeeService(xa: Transactor[Task]) extends LogSupport {
+class EmployeeService(xa: Transactor[IO]) extends LogSupport {
 
   import com.despegar.demo.utils.CirceUtils.circeCustomSyntax._
   import com.despegar.demo.model.Employee._
   import com.despegar.demo.api.EmployeeService._
 
 
-  def service(employeeProgram: EmployeeProgram): HttpService = {
+  def service(employeeProgram: EmployeeProgram): HttpService[IO] = {
 
-    def route = HttpService {
+    def route = HttpService[IO] {
       case GET -> Root / "list" => handleGetAll
       case GET -> Root / LongVar(id) => handleFindById(id)
       case GET -> Root / "filter" / LocalDateVar(startDateFrom) / LocalDateVar(startDateTo):?
@@ -36,7 +36,7 @@ class EmployeeService(xa: Transactor[Task]) extends LogSupport {
 
     }
 
-    def handleGetAll: Task[Response] =
+    def handleGetAll: IO[Response[IO]] =
       employeeProgram.findAll.transact(xa).attempt.flatMap {
         case Right(employeeList) => Ok(employeeList.asJson)
         case Left(cause) =>
@@ -44,7 +44,7 @@ class EmployeeService(xa: Transactor[Task]) extends LogSupport {
           InternalServerError("Error getting all employees")
       }
 
-    def handleFindById(id: Long): Task[Response] =
+    def handleFindById(id: Long): IO[Response[IO]] =
       employeeProgram.findById(id).transact(xa).attempt.flatMap {
         case Right(employee) => Ok(employee.asJson)
         case Left(cause) =>
@@ -53,7 +53,7 @@ class EmployeeService(xa: Transactor[Task]) extends LogSupport {
       }
 
 
-    def handleFindByFilter(filter: EmployeeFilter): Task[Response] =
+    def handleFindByFilter(filter: EmployeeFilter): IO[Response[IO]] =
       employeeProgram.findByFilter(filter).transact(xa).attempt.flatMap {
         case Right(employeeList) => Ok(employeeList.asJson)
         case Left(cause) =>
@@ -68,7 +68,7 @@ class EmployeeService(xa: Transactor[Task]) extends LogSupport {
 }
 
 object EmployeeService extends LogSupport {
-  def apply(xa: Transactor[Task]): EmployeeService = new EmployeeService(xa)
+  def apply(xa: Transactor[IO]): EmployeeService = new EmployeeService(xa)
 
   object NameQueryParamMatcher extends OptionalQueryParamDecoderMatcher[String]("name")
 

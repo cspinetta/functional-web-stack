@@ -5,8 +5,7 @@ import com.despegar.demo.utils.ThreadUtils
 import com.zaxxer.hikari.HikariDataSource
 import doobie.util.transactor.Transactor
 import doobie.util.transactor.Transactor.Aux
-import fs2.Task
-import fs2.interop.cats._
+import cats.effect._
 
 object DemoDS {
   private[this] def dataSource: HikariDataSource = {
@@ -23,7 +22,7 @@ object DemoDS {
     ds
   }
 
-  lazy val DemoTransactor: Aux[Task, HikariDataSource] = {
-    Transactor.fromDataSource[Task](dataSource)
+  lazy val DemoTransactor: Aux[IO, HikariDataSource] = {
+    Transactor.fromDataSource[IO](dataSource)
   }
 }

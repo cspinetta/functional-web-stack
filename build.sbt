@@ -31,7 +31,7 @@ scalacOptions ++= Seq(
   "-Ywarn-value-discard",
   "-Xfuture")
 
-val Http4sVersion   = "0.17.2"
+val Http4sVersion   = "0.18.0"
 val CirceVersion    = "0.8.0"
 
 libraryDependencies ++= Seq(
