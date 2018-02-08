@@ -8,8 +8,6 @@ import com.despegar.demo.utils.LogSupport
 import cats.effect._
 import org.http4s._
 import org.http4s.dsl.io._
-import org.http4s._
-import org.http4s.dsl.io._
 import doobie._
 import doobie.implicits._
 import io.circe.syntax._
@@ -48,12 +46,16 @@ class EmployeeService(xa: Transactor[IO]) extends LogSupport {
       }
 
     def handleFindById(id: Long): IO[Response[IO]] =
-      employeeProgram.findById(id).transact(xa).attempt.flatMap {
-        case Right(employee) => Ok(employee.asJson)
-        case Left(cause) =>
-          log.error(s"Error getting employee by id $id", cause)
-          InternalServerError(s"Error getting employee by id $id")
-      }
+      employeeProgram
+        .findById(id)
+        .transact(xa)
+        .attempt
+        .flatMap {
+          case Right(employee) => Ok(employee.asJson)
+          case Left(cause) =>
+            log.error(s"Error getting employee by id $id", cause)
+            InternalServerError(s"Error getting employee by id $id")
+        }
 
 
     def handleFindByFilter(filter: EmployeeFilter): IO[Response[IO]] =

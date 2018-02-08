@@ -16,9 +16,7 @@ import org.http4s.server.Router
 
 import scala.concurrent.ExecutionContext
 
-object Server extends StreamApp[IO] {
-  import Stores._
-  import Programs._
+trait Server extends StreamApp[IO] with Stores with Programs {
 
   private val executor : ExecutorService  = Executors.newFixedThreadPool(30, namedThreadFactory("demo-server-pool"))
   implicit val ec: ExecutionContext = ExecutionContext.fromExecutor(executor)
@@ -37,8 +35,9 @@ object Server extends StreamApp[IO] {
       .serve
   }
 }
+object Server extends Server
 
-object Stores {
+trait Stores {
   val transactor = DemoDS.DemoTransactor
 
   val txCompanyStore = new TxEmployeeStore(transactor)
@@ -47,8 +46,7 @@ object Stores {
 
 }
 
-object Programs {
-  import Stores._
+trait Programs extends Stores {
 
   val companyProgram = new CompanyProgram(companyStore, employeeStore)
   val employeeProgram = new EmployeeProgram(employeeStore)

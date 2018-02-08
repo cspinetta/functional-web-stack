@@ -18,9 +18,7 @@ class CompanyStore() extends DemoStore {
          where c.id = $companyId
       """.query[(Long, String,
                 Long, String, Option[Int], BigDecimal, LocalDate)].map {
-      case (companyId, companyName,
-            employeeId, employeeName, employeeAge, employeeSalary, employeeStartDate) =>
-
+      case (companyId, companyName, employeeId, employeeName, employeeAge, employeeSalary, employeeStartDate) =>
         val employee = Employee(Some(employeeId), employeeName, employeeAge, employeeSalary, employeeStartDate)
         val company = Company(companyId = Some(companyId), name = companyName)
         (company, employee)
