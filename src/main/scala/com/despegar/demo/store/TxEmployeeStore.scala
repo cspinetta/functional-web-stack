@@ -2,7 +2,6 @@ package com.despegar.demo.store
 
 import cats.effect.IO
 import doobie.util.transactor.Transactor
-import doobie._
 import doobie.implicits._
 
 class TxEmployeeStore(transactor: Transactor[IO]) {

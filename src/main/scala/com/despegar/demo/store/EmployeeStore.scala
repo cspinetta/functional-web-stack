@@ -5,7 +5,7 @@ import com.despegar.demo.api.EmployeeFilter
 import com.despegar.demo.model._
 import doobie._
 import doobie.implicits._
-import doobie.util.fragments.whereAndOpt
+import doobie.util.fragments.{whereAnd, whereAndOpt}
 
 class EmployeeStore() {
   val pageSize = 100
@@ -25,7 +25,7 @@ class EmployeeStore() {
 
     val allConditions = Seq(idsCondition, nameCondition, ageCondition, startDateFromCondition, startDateToCondition)
 
-    val q = fr""" select id, name, age, salary, start_date from Test.employee""" ++
+    val q = fr"select id, name, age, salary, start_date from Test.employee" ++
           whereAndOpt(allConditions.toArray:_*) ++
           fr"limit $pageSize" ++
           filter.offset.map(off => fr"offset $off").getOrElse(Fragment.empty)
@@ -44,6 +44,12 @@ class EmployeeStore() {
   def findById(id: Long): ConnectionIO[Option[Employee]] = {
     val q = sql"select id, name, age, salary, start_date from Test.employee where id = $id"
     q.query[Employee].option
+  }
+
+  def findByIds(ids: NonEmptyList[Long]): ConnectionIO[List[Employee]] = {
+    val q = fr"select id, name, age, salary, start_date from Test.employee" ++
+      whereAnd(Fragments.in(fr"id", ids))
+    q.query[Employee].list
   }
 
 }
