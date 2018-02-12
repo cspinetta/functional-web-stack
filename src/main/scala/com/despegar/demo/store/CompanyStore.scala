@@ -14,7 +14,7 @@ class CompanyStore() extends DemoStore {
          select c.id, c.name,
              		e.id, e.name, e.age, e.salary, e.start_date
          from Test.company c
-         left join Test.employee e on e.company_id = c.id
+         inner join Test.employee e on e.company_id = c.id
          where c.id = $companyId
       """.query[(Long, String,
                 Long, String, Option[Int], BigDecimal, LocalDate)].map {

@@ -29,16 +29,16 @@ trait CompanyClient extends Http4sClientDsl[IO] {
 
   def httpClient: Client[IO]
 
-  def getById(companyId: Long): Either[Throwable, Option[Company]] = {
-    httpClient.expect(s"http://localhost:9290/demo/company/$companyId")(jsonOf[IO, Option[Company]]).attempt.unsafeRunSync()
+  def getById(companyId: Long): IO[Either[Throwable, Option[Company]]] = {
+    httpClient.expect(s"http://localhost:9290/demo/company/$companyId")(jsonOf[IO, Option[Company]]).attempt
   }
 
-  def hire(companyId: Long, employee: Employee): Either[Throwable, Unit] =
+  def hire(companyId: Long, employee: Employee): IO[Either[Throwable, Unit]] =
     Uri.fromString(s"http://localhost:9290/demo/company/hire/$companyId").toOption match {
       case Some(uri) =>
         import Employee._
-        httpClient.expect[Unit](POST(uri, employee.asJson)).attempt.unsafeRunSync()
-      case None => Left(new RuntimeException(s"Invalid uri"))
+        httpClient.expect[Unit](POST(uri, employee.asJson)).attempt
+      case None => IO.pure(Left(new RuntimeException(s"Invalid uri")))
     }
 
 }

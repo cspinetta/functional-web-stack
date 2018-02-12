@@ -14,6 +14,7 @@ name := artifactId
 scalaVersion := "2.12.3"
 
 fork in run := true
+parallelExecution in test := false
 
 scalacOptions ++= Seq(
   "-deprecation",
@@ -33,7 +34,7 @@ scalacOptions ++= Seq(
 
 val Http4sVersion   = "0.18.0"
 val CirceVersion    = "0.8.0"
-val DoobieVersion   = "0.5.0-RC1"
+val DoobieVersion   = "0.5.0"
 
 libraryDependencies ++= Seq(
   "com.despegar.library"    %   "logging"                 % "0.0.3",
@@ -42,6 +43,7 @@ libraryDependencies ++= Seq(
   "org.http4s"              %%  "http4s-dsl"              % Http4sVersion,
   "org.http4s"              %%  "http4s-blaze-client"     % Http4sVersion,
   "org.tpolecat"            %%  "doobie-core"             % DoobieVersion,
+  "org.tpolecat"            %%  "doobie-h2"               % DoobieVersion             % "test",
   "ch.qos.logback"          %   "logback-classic"         % "1.2.1",
   "com.github.pureconfig"   %%  "pureconfig"              % "0.7.1",
   "org.mariadb.jdbc"        %   "mariadb-java-client"     % "1.5.9",
@@ -49,10 +51,8 @@ libraryDependencies ++= Seq(
   "io.circe"                %%  "circe-generic"           % CirceVersion,
   "io.circe"                %%  "circe-java8"             % CirceVersion,
   "io.circe"                %%  "circe-generic-extras"    % CirceVersion,
-  "com.h2database"          %   "h2"                      % "1.4.193",
   "com.despegar.tech"       %%  "http4s-scala-routing"    % "0.1.0",
   "joda-time"               %   "joda-time"               % "2.9.9",
-  "com.h2database"          %   "h2"                      % "1.4.196"                 % "test",
   "org.scalatest"           %   "scalatest_2.12"          % "3.0.3"                   % "test",
   "org.mockito"             %   "mockito-core"            % "2.7.22"                  % "test"
 )

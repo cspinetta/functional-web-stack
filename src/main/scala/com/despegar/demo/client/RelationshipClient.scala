@@ -27,7 +27,7 @@ trait RelationshipClient {
   def httpClient: Client[IO]
 
   def getNDegreeRelationshipsById(id: Long, degree: Int): IO[Either[Throwable, List[Relationship]]] = {
-    httpClient.expect(s"http://localhost:9290/demo/relationships/$id")(jsonOf[IO, List[Relationship]]).attempt
+    httpClient.expect(s"http://localhost:9290/demo/relationships/$id/degree/$degree")(jsonOf[IO, List[Relationship]]).attempt
   }
 
 }

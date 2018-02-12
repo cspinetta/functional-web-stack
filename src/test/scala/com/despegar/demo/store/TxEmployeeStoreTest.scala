@@ -1,12 +1,15 @@
 package com.despegar.demo.store
 
-import com.despegar.demo.db.DemoDS
-import org.scalatest.FunSuite
+import org.scalatest.{BeforeAndAfter, FunSuite}
 
-class TxEmployeeStoreTest extends FunSuite {
+class TxEmployeeStoreTest extends FunSuite with BeforeAndAfter with DBFixture {
+
+  before {
+    createSchema()
+  }
 
   test("findAllNames ok") {
-    val instance = new TxEmployeeStore(DemoDS.DemoTransactor)
+    val instance = new TxEmployeeStore(transactor)
     instance.findAllNames.foreach(println)
   }
 
