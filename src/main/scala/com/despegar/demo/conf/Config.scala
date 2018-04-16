@@ -1,10 +1,17 @@
 package com.despegar.demo.conf
 
-import com.despegar.demo.utils.ConfigurationSupport
+import scala.concurrent.duration.FiniteDuration
 
-sealed trait Config
+trait ConfigSupport {
+  protected val config: Config = Config
+}
 
-object Config extends ConfigurationSupport {
+sealed trait Config {
+
+  def currentEnvironment: String
+
+  def datasource: Datasource
+  def client: Client
 
   case class Datasource(url: String,
                         driverClassName: String,
@@ -14,9 +21,13 @@ object Config extends ConfigurationSupport {
                         connectTimeout: Long = 4000,
                         socketTimeout: Long = 10000,
                         logEnabled: Boolean = true,
-                        debugEnabled: Boolean = true) extends Config
+                        debugEnabled: Boolean = true)
 
-  lazy val datasource: Datasource = pureconfig.loadConfigOrThrow[Datasource](config.getConfig("datasource"))
+  case class Client(maxTotalConnections: Int, idleTimeout: FiniteDuration, requestTimeout: FiniteDuration)
 }
 
+object Config extends Config with ConfigLoader {
 
+  lazy val datasource: Datasource = pureconfig.loadConfigOrThrow[Datasource](config.getConfig("datasource"))
+  lazy val client: Client = pureconfig.loadConfigOrThrow[Client](config.getConfig("client"))
+}

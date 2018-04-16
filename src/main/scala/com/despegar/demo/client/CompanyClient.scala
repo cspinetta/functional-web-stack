@@ -2,32 +2,40 @@ package com.despegar.demo.client
 
 import cats.effect.IO
 import com.despegar.demo.model.{Company, Employee}
-import org.http4s.Uri
-import org.http4s.dsl.io._
 import io.circe.syntax._
+import org.http4s.Uri
 import org.http4s.client._
-import org.http4s.client.blaze._
 import org.http4s.client.dsl.Http4sClientDsl
+import org.http4s.dsl.io._
 
-import scala.concurrent.duration._
 
-object CompanyClient extends CompanyClient {
-
-  val clientConfig = BlazeClientConfig.defaultConfig.copy(
-    maxTotalConnections = 10,
-    idleTimeout = 5.minutes,
-    requestTimeout = 30.seconds
-  )
-
-  override val httpClient: Client[IO] = Http1Client[IO](clientConfig).unsafeRunSync()
-
-}
-
-trait CompanyClient extends Http4sClientDsl[IO] {
-
+/**
+  *
+  * == Company Client ==
+  *
+  * Usage example:
+  *
+  * {{{
+  * import org.http4s.client.blaze._
+  * import cats.effect.IO
+  * import org.http4s.client._
+  *
+  * val httpClient: Client[IO] = Http1Client[IO](
+  *     BlazeClientConfig.defaultConfig.copy(
+  *       maxTotalConnections = 10,
+  *       idleTimeout = 5 minutes,
+  *       requestTimeout = 30 seconds))
+  *     .unsafeRunSync()
+  *
+  * val companyClient = CompanyClient(httpClient)
+  *
+  * companyClient.getById(companyId = 10).unsafeRunSync() // result in Either[Throwable, Option[Company]]
+  * }}}
+  *
+  * @param httpClient: Client manager
+  */
+case class CompanyClient(httpClient: Client[IO]) extends Http4sClientDsl[IO] {
   import com.despegar.demo.utils.CirceUtils.circeCustomSyntax._
-
-  def httpClient: Client[IO]
 
   def getById(companyId: Long): IO[Either[Throwable, Option[Company]]] = {
     httpClient.expect(s"http://localhost:9290/demo/company/$companyId")(jsonOf[IO, Option[Company]]).attempt
