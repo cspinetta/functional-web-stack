@@ -11,25 +11,24 @@ class CompanyStore() extends DemoStore {
 
   def findCompanyWithStaff(companyId: Long): ConnectionIO[Option[Company]] = {
     val results = sql"""
-         select c.id, c.name,
-             		e.id, e.name, e.age, e.salary, e.start_date
-         from Test.company c
-         inner join Test.employee e on e.company_id = c.id
-         where c.id = $companyId
-      """.query[(Long, String,
-                Long, String, Option[Int], BigDecimal, LocalDate)].map {
-      case (companyId, companyName, employeeId, employeeName, employeeAge, employeeSalary, employeeStartDate) =>
-        val employee = Employee(Some(employeeId), employeeName, employeeAge, employeeSalary, employeeStartDate)
-        val company = Company(companyId = Some(companyId), name = companyName)
+         select c.id, c.name, e.id, e.name, e.age, e.salary, e.start_date
+           from Test.company c
+             inner join Test.employee e on e.company_id = c.id
+           where c.id = $companyId
+      """.query[(Long, String, Long, String, Option[Int], BigDecimal, LocalDate)].map {
+      case (cId, cName, eId, eName, eAge, eSalary, eStartDate) =>
+
+        val employee = Employee(Some(eId), eName, eAge, eSalary, eStartDate)
+        val company = Company(companyId = Some(cId), name = cName)
+
         (company, employee)
-    }.list
+    }.to[List]
 
     results.map(tuples => {
       val allEmployees: List[Employee] = tuples.map(_._2)
       tuples.headOption.map(tuple => tuple._1.copy(employees = allEmployees))
     })
   }
-
 
   def createCompanyTable: ConnectionIO[Int] =
     fr"""create table Test.company1(
@@ -39,10 +38,9 @@ class CompanyStore() extends DemoStore {
         )
       """.update.run
 
-
   def save(name: String): ConnectionIO[Long] =
-    fr"""insert into Test.company(name) values ($name)""".update.withUniqueGeneratedKeys[Long]("id")
-
+    fr"""insert into Test.company(name) values ($name)"""
+      .update.withUniqueGeneratedKeys[Long]("id")
 
   def saveAll(names: List[String]): ConnectionIO[Int] = {
     import cats.implicits._
@@ -51,12 +49,9 @@ class CompanyStore() extends DemoStore {
     Update[String](sql).updateMany(names)
   }
 
-
-  def incrementStaff(companyId: Long): ConnectionIO[Int] = {
-    fr"""update Test.company set staff_count = staff_count + 1 where id = $companyId""".update.run
-  }
-
-
+  def incrementStaff(companyId: Long): ConnectionIO[Int] =
+    fr"""update Test.company set staff_count = staff_count + 1
+           where id = $companyId""".update.run
 
   def insert(id: Long, name: String): ConnectionIO[Int] =
     fr"""insert into Test.company(id, name) values ($id, $name)""".update.run

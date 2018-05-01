@@ -9,8 +9,7 @@ class TxEmployeeStore(transactor: Transactor[IO]) {
   def findAllNames: List[String] =
       sql"select name from Test.employee"   // Fragment
         .query[String]                      // Query0[String]
-        .list                               // ConnectionIO[List[String]]
+        .to[List]                           // ConnectionIO[List[String]]
         .transact(transactor)               // IO[List[String]]
         .unsafeRunSync()                    // List[String]
-
 }

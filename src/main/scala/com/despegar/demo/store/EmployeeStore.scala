@@ -13,24 +13,23 @@ class EmployeeStore() {
   def findAll: ConnectionIO[List[Employee]] =
     sql"select id, name, age, salary, start_date from Test.employee"
       .query[Employee]
-      .list
-
+      .to[List]
 
   def findByFilter(filter: EmployeeFilter): ConnectionIO[List[Employee]] = {
     val idsCondition = NonEmptyList.fromList(filter.ids).map(ids => Fragments.in(fr"id", ids))
     val nameCondition: Option[Fragment] = filter.name.map(n => fr"name like $n")
     val ageCondition: Option[Fragment] = filter.minimumAge.map(age => fr"age >= $age")
-    val startDateFromCondition: Option[Fragment] = Some(fr"start_date >= ${filter.startDateFrom}")
-    val startDateToCondition: Option[Fragment] = Some(fr"start_date < ${filter.startDateTo}")
+    val fromCondition: Option[Fragment] = Some(fr"start_date >= ${filter.startDateFrom}")
+    val toCondition: Option[Fragment] = Some(fr"start_date < ${filter.startDateTo}")
 
-    val allConditions = Seq(idsCondition, nameCondition, ageCondition, startDateFromCondition, startDateToCondition)
+    val allConditions = Seq(idsCondition, nameCondition, ageCondition, fromCondition, toCondition)
 
     val q = fr"select id, name, age, salary, start_date from Test.employee" ++
           whereAndOpt(allConditions.toArray:_*) ++
           fr"limit $pageSize" ++
           filter.offset.map(off => fr"offset $off").getOrElse(Fragment.empty)
 
-    q.query[Employee].list
+    q.query[Employee].to[List]
   }
 
   def happyBirthday(id: Long): ConnectionIO[Int] =
@@ -38,7 +37,11 @@ class EmployeeStore() {
 
   def save(employee: Employee, companyId: Long): ConnectionIO[Long] =
     fr"""insert into Test.employee(name, age, salary, start_date, company_id)
-         values (${employee.name}, ${employee.age}, ${employee.salary}, ${employee.startDate}, $companyId)"""
+         values (${employee.name},
+                 ${employee.age},
+                 ${employee.salary},
+                 ${employee.startDate},
+                 $companyId)"""
       .update.withUniqueGeneratedKeys[Long]("id")
 
   def findById(id: Long): ConnectionIO[Option[Employee]] = {
@@ -49,7 +52,7 @@ class EmployeeStore() {
   def findByIds(ids: NonEmptyList[Long]): ConnectionIO[List[Employee]] = {
     val q = fr"select id, name, age, salary, start_date from Test.employee" ++
       whereAnd(Fragments.in(fr"id", ids))
-    q.query[Employee].list
+    q.query[Employee].to[List]
   }
 
 }
