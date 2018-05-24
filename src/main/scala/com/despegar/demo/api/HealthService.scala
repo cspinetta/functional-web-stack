@@ -1,11 +1,9 @@
 package com.despegar.demo.api
 
 import cats.effect.IO
-import com.despegar.demo.utils.LogSupport
 import com.despegar.demo.BuildInfo
+import com.despegar.demo.utils.LogSupport
 import org.http4s.HttpService
-import cats.effect._
-import org.http4s._
 import org.http4s.dsl.io._
 
 class HealthService extends LogSupport {

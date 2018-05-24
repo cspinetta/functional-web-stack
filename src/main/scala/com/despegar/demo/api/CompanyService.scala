@@ -4,20 +4,17 @@ import cats.effect._
 import com.despegar.demo.model.Employee
 import com.despegar.demo.program.CompanyProgram
 import com.despegar.demo.utils.LogSupport
-import cats.effect._
-import org.http4s._
-import org.http4s.dsl.io._
 import doobie._
 import doobie.implicits._
+import io.circe.syntax._
 import org.http4s._
 import org.http4s.dsl.io._
-import io.circe.syntax._
 
 class CompanyService (xa: Transactor[IO]) extends LogSupport {
 
-  import com.despegar.demo.utils.CirceUtils.circeCustomSyntax._
-  import com.despegar.demo.model.Employee._
   import com.despegar.demo.model.Company._
+  import com.despegar.demo.model.Employee._
+  import com.despegar.demo.utils.CirceUtils.circeCustomSyntax._
 
 
   def service(companyProgram: CompanyProgram): HttpService[IO] = {

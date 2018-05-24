@@ -4,30 +4,28 @@ import java.time.LocalDate
 
 import com.despegar.demo.utils.LogSupport
 import io.circe.syntax._
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.{EitherValues, Matchers, WordSpecLike}
 
-class CompanyTest extends FunSuite with Matchers with LogSupport {
+class CompanyTest extends WordSpecLike with Matchers with EitherValues with LogSupport {
 
-  test("semiauto encoder & decoder") {
-    val company = new Company(Some(1L), "testCompany")
-    val serialized = company.asJson
-    log.debug(serialized.toString)
-    val deserialized = serialized.as[Company]
+  "The Company entity" should {
+    "be serialized/deserialized correctly" in {
+      val company = new Company(Some(1L), "testCompany")
+      val serialized = company.asJson
+      log.debug(serialized.toString)
+      val deserialized = serialized.as[Company]
 
-    Right(company) shouldBe deserialized
-  }
+      deserialized.right.value shouldBe company
+    }
+    "be serialized/deserialized correctly when has employees" in {
+      val employee = new Employee(Some(22L), "theName", age = None, BigDecimal.valueOf(10000), LocalDate.now())
+      val company = new Company(Some(1L), "testCompany", List(employee))
+      val serialized = company.asJson
+      log.debug(serialized.toString)
 
-  test("semiauto encoder & decoder - Company with employees") {
-    val employee = new Employee(Some(22L), "theName", age = None, BigDecimal.valueOf(10000), LocalDate.now())
-    val company = new Company(Some(1L), "testCompany", List(employee))
-    val serialized = company.asJson
-    log.debug(serialized.toString)
-    val deserialized = serialized.as[Company]
+      val deserialized = serialized.as[Company]
 
-    deserialized match {
-      case Right(c) => c shouldBe company
-      case Left(cause) => log.debug(serialized.toString)
+      deserialized.right.value shouldBe company
     }
   }
-
 }

@@ -4,5 +4,5 @@ import io.circe.Printer
 import org.http4s.circe.CirceInstances
 
 object CirceUtils {
-  val circeCustomSyntax = CirceInstances.withPrinter(Printer.noSpaces.copy(dropNullValues = true))
+  val circeCustomSyntax: CirceInstances = CirceInstances.withPrinter(Printer.noSpaces.copy(dropNullValues = true))
 }

@@ -1,4 +1,4 @@
-Demo for Tech talk: *Stack Http4s + Doobie + Circe*
+Demo for Tech talk: [*Functional Web Stack: Http4s + Doobie*][1]
 =================================
 
 ### Dependencies:
@@ -11,3 +11,4 @@ Demo for Tech talk: *Stack Http4s + Doobie + Circe*
 [Http4s]:http://http4s.org/
 [Doobie]:http://tpolecat.github.io/doobie/
 [Circe]:https://circe.github.io/circe/
+[1]:https://slides.com/cspinetta-desp/stack-web-funcional/
