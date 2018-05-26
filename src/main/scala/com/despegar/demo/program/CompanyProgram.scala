@@ -6,6 +6,8 @@ import doobie.hi.ConnectionIO
 
 class CompanyProgram(companyStore: CompanyStore, employeeStore: EmployeeStore) {
 
+  def save(company: Company): ConnectionIO[Long] = companyStore.save(company.name)
+
   def hire(companyId: Long, employee: Employee): ConnectionIO[Long] =
     for {
       employeeId <- employeeStore.save(employee, companyId)

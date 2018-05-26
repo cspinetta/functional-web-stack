@@ -34,7 +34,7 @@ libraryDependencies ++= Seq(
   "org.http4s"              %%  "http4s-dsl"              % Http4sVersion,
   "org.http4s"              %%  "http4s-blaze-client"     % Http4sVersion,
   "org.tpolecat"            %%  "doobie-core"             % DoobieVersion,
-  "org.tpolecat"            %%  "doobie-h2"               % DoobieVersion             % "test",
+  "org.tpolecat"            %%  "doobie-h2"               % DoobieVersion,
   "ch.qos.logback"          %   "logback-classic"         % "1.2.1",
   "com.github.pureconfig"   %%  "pureconfig"              % "0.7.1",
   "org.mariadb.jdbc"        %   "mariadb-java-client"     % "1.5.9",

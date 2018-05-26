@@ -5,9 +5,7 @@
 
   <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
-      <pattern>
-        <![CDATA[%date %-4level [%thread] [%K{X-UOW}-%K{X-RequestId}-${HOSTNAME}] [%K{User-Agent}] [%K{X-Forwarded-For}] : %message%n]]>
-      </pattern>
+      <pattern><![CDATA[%date %-4level [${HOSTNAME}] [%thread] \(...\)%logger{4} : %msg%n]]></pattern>
     </encoder>
   </appender>
 

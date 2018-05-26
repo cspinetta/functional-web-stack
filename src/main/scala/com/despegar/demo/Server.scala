@@ -6,7 +6,7 @@ import cats.effect._
 import com.despegar.demo.api.{CompanyService, EmployeeService, HealthService}
 import com.despegar.demo.client.RelationshipClient
 import com.despegar.demo.conf.ConfigSupport
-import com.despegar.demo.db.DemoDS
+import com.despegar.demo.db.{DataSourceProvider, DemoSchema}
 import com.despegar.demo.program._
 import com.despegar.demo.store._
 import com.despegar.demo.utils.ThreadUtils._
@@ -44,12 +44,19 @@ object Server extends StreamApp[IO] with Stores with Programs with ClientFactory
   }
 }
 
-trait Stores {
-  val transactor: Transactor[IO] = DemoDS.DemoTransactor
+trait Stores extends ConfigSupport {
+  lazy val transactor: Transactor[IO] = {
+    if (config.db.useDemo) {
+      val t = DataSourceProvider.H2TransactorInstance
+      DemoSchema.createSchema(t)
+      t
+    }
+    else DataSourceProvider.DSTransactor
+  }
 
-  val txCompanyStore = new TxEmployeeStore(transactor)
-  val employeeStore = new EmployeeStore
-  val companyStore = new CompanyStore
+  lazy val txCompanyStore = new TxEmployeeStore(transactor)
+  lazy val employeeStore = new EmployeeStore
+  lazy val companyStore = new CompanyStore
 
 }
 trait Clients {
@@ -58,14 +65,14 @@ trait Clients {
 
 trait Programs extends Stores with Clients {
 
-  val companyProgram = new CompanyProgram(companyStore, employeeStore)
-  val employeeProgram = new EmployeeProgram(employeeStore)
+  lazy val companyProgram = new CompanyProgram(companyStore, employeeStore)
+  lazy val employeeProgram = new EmployeeProgram(employeeStore)
   def relationshipProgram(client: Client[IO]) = new RelationshipProgram(employeeStore, relationshipClient(client))
 }
 
 trait ClientFactory extends ConfigSupport {
 
-  private val clientConfig = BlazeClientConfig.defaultConfig.copy(
+  private lazy val clientConfig = BlazeClientConfig.defaultConfig.copy(
     maxTotalConnections = config.client.maxTotalConnections,
     idleTimeout = config.client.idleTimeout,
     requestTimeout = config.client.requestTimeout

@@ -14,7 +14,7 @@ class EmployeeStoreIT extends WordSpecLike with Matchers with BeforeAndAfter wit
   val companyId = 5L
 
   before {
-    createSchema()
+    createSchema(transactor)
     insertCompany(id = companyId, name = "Despegar.com", staffCount = 2).unsafeRunSync()
   }
 

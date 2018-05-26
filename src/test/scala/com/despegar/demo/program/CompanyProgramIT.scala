@@ -13,7 +13,7 @@ import org.scalatest.{BeforeAndAfter, Matchers, WordSpecLike}
 class CompanyProgramIT extends WordSpecLike with Matchers with BeforeAndAfter with DBFixture with LogSupport {
 
   before {
-    createSchema()
+    createSchema(transactor)
   }
 
   "The Company Program" should {

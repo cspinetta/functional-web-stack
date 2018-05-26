@@ -1,6 +1,6 @@
 package com.despegar.demo.utils
 
-import com.despegar.demo.conf.Config
+import com.despegar.demo.conf.ConfigSupport
 import doobie.util.log.{ExecFailure, ProcessingFailure, Success}
 import org.slf4j.{Logger, LoggerFactory}
 
@@ -8,11 +8,11 @@ trait LogSupport {
   val log: Logger = LoggerFactory.getLogger(this.getClass)
 }
 
-trait SqlLogSupport { self: LogSupport =>
+trait SqlLogSupport { self: LogSupport with ConfigSupport =>
 
   import doobie._
 
-  private val debugEnabled = Config.datasource.debugEnabled
+  private val debugEnabled = config.db.debugEnabled
 
   implicit val han: LogHandler = LogHandler {
     case Success(s, a, e1, e2) =>

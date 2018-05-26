@@ -3,15 +3,16 @@ package com.despegar.demo.conf
 import scala.concurrent.duration.FiniteDuration
 
 trait ConfigSupport {
-  protected val config: Config = Config
+  protected lazy val config: Config.AppConfig = Config.loadConfig
 }
 
-sealed trait Config {
+object Config extends ConfigLoader {
 
-  def currentEnvironment: String
+  def loadConfig: Config.AppConfig = pureconfig.loadConfigOrThrow[Config.AppConfig](config)
 
-  def datasource: Datasource
-  def client: Client
+  case class AppConfig(db: DB, client: Client)
+
+  case class DB(useDemo: Boolean, debugEnabled: Boolean, datasource: Datasource)
 
   case class Datasource(url: String,
                         driverClassName: String,
@@ -19,15 +20,10 @@ sealed trait Config {
                         password: String,
                         maxPoolSize: Int = 20,
                         connectTimeout: Long = 4000,
-                        socketTimeout: Long = 10000,
-                        logEnabled: Boolean = true,
-                        debugEnabled: Boolean = true)
+                        socketTimeout: Long = 10000)
 
   case class Client(maxTotalConnections: Int, idleTimeout: FiniteDuration, requestTimeout: FiniteDuration)
-}
 
-object Config extends Config with ConfigLoader {
-
-  lazy val datasource: Datasource = pureconfig.loadConfigOrThrow[Datasource](config.getConfig("datasource"))
+  lazy val datasource: Datasource = pureconfig.loadConfigOrThrow[Datasource](config.getConfig("db"))
   lazy val client: Client = pureconfig.loadConfigOrThrow[Client](config.getConfig("client"))
 }

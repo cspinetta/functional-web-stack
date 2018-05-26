@@ -12,7 +12,7 @@ import org.scalatest.{BeforeAndAfter, Matchers, OptionValues, WordSpecLike}
 class CompanyStoreIT extends WordSpecLike with Matchers with BeforeAndAfter with OptionValues with DBFixture with LogSupport {
 
   before {
-    createSchema()
+    createSchema(transactor)
   }
 
   "The Company Store" should {
