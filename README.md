@@ -1,5 +1,5 @@
 Demo for Tech talk: [*Functional Web Stack: Http4s + Doobie*][1]
-==============================
+===============================
 
 ### Dependencies:
 - [Scala] v2.12.x
